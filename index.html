@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Senior Full-Stack Engineer — Interactive Workday Simulator</title>
+<meta name="description" content="An interactive visual simulation of a real Senior Full-Stack Engineer workday: product thinking, architecture, frontend, backend, databases, testing, review, performance, and production debugging.">
+<meta name="theme-color" content="#0b0f14">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Senior Full-Stack Engineer — Interactive Workday Simulator">
+<meta property="og:description" content="Explore a real Senior Full-Stack Engineer workday visually — from product requirements and system design to production incidents and recovery.">
+<meta property="og:site_name" content="Senior Full-Stack Workday Simulator">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Senior Full-Stack Engineer — Interactive Workday Simulator">
+<meta name="twitter:description" content="A visual, interactive simulation of a real Senior Full-Stack Engineer workday.">
+<style>
+:root{
+  --bg:#0b0f14;
+  --bg2:#10161e;
+  --panel:#141c25;
+  --panel2:#18222d;
+  --panel3:#1d2834;
+  --border:#293544;
+  --text:#f4f6f8;
+  --muted:#9da9b6;
+  --emerald:#4fd1a5;
+  --emerald2:#2ca77f;
+  --indigo:#7c89ff;
+  --amber:#f5b84b;
+  --coral:#ff7a68;
+  --sky:#68b8e8;
+  --rose:#dd7fb1;
+  --good:#53c28b;
+  --warn:#e7ae4a;
+  --bad:#e86d6d;
+  --shadow:0 28px 80px rgba(0,0,0,.30);
+  --r:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  margin:0;color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;
+  line-height:1.68;
+  background:
+    radial-gradient(circle at 12% -5%,rgba(79,209,165,.08),transparent 28%),
+    radial-gradient(circle at 92% 8%,rgba(124,137,255,.07),transparent 27%),
+    linear-gradient(180deg,#0b0f14 0%,#0d1218 48%,#0b0f14 100%);
+}
+code,.mono,[dir=ltr]{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;unicode-bidi:isolate}
+button{font:inherit}
+a{color:inherit}
+.wrap{width:min(1260px,calc(100% - 28px));margin:auto}
+.progress{position:fixed;left:0;top:0;height:3px;width:0;z-index:150;background:linear-gradient(90deg,var(--emerald),var(--amber),var(--coral))}
+nav{position:sticky;top:0;z-index:120;background:rgba(11,15,20,.91);backdrop-filter:blur(16px);border-block:1px solid #1f2935}
+.nav{display:flex;gap:7px;overflow:auto;padding:9px 0}
+.nav a{text-decoration:none;white-space:nowrap;color:#9ca9b7;font-size:12px;padding:7px 10px;border-radius:9px}
+.nav a:hover{background:#18212a;color:white}
+
+header{padding:72px 0 46px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid #304030;background:#131b18;border-radius:999px;padding:7px 12px;color:#b9d5c9;font-size:12px}
+.live{width:8px;height:8px;border-radius:50%;background:var(--emerald);box-shadow:0 0 18px var(--emerald)}
+h1{font-size:clamp(42px,7vw,84px);line-height:1.03;letter-spacing:-.045em;margin:18px 0 16px}
+.grad{background:linear-gradient(90deg,#fff,#b8f4dc,var(--indigo));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(17px,2.1vw,22px);color:#b8c1ca;max-width:970px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:30px}
+.card,.panel{background:linear-gradient(180deg,rgba(20,28,37,.97),rgba(15,22,29,.98));border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+.card{padding:20px}.panel{padding:18px}
+.kicker{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--emerald);text-transform:uppercase}
+.small{font-size:13px;color:var(--muted)}
+.btn{border:1px solid #344250;background:#17212b;color:#f3f6f8;border-radius:12px;min-height:44px;padding:10px 15px;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.primary{background:linear-gradient(135deg,#23795f,#4b5fc5);border-color:transparent;font-weight:800}
+.btn.good{border-color:#377456;background:#13261e}.btn.warn{border-color:#72582e;background:#2a2114}.btn.danger{border-color:#704044;background:#291618}
+.btn.active{outline:2px solid var(--emerald);outline-offset:2px}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.mode-toggle{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.mode-btn{padding:12px;border:1px solid #344250;background:#121a22;color:#aeb9c4;border-radius:11px;cursor:pointer}
+.mode-btn.active{background:#18251f;color:white;border-color:var(--emerald);box-shadow:inset 0 0 0 1px rgba(79,209,165,.25)}
+.mode-detail{margin-top:13px;border-right:3px solid var(--emerald);padding:11px 13px;background:#111a17;border-radius:10px;color:#bdd2c9}
+
+.team{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.person{border:1px solid #2b3744;border-radius:14px;padding:13px;background:#111820}
+.avatar{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#222e3b;border:1px solid #3d4f60;margin-bottom:8px;font-weight:800}
+.avatar.you{background:#19342a;border-color:#3f8064}
+section{padding:66px 0;border-top:1px solid #1b252f}
+.section-head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px;margin-bottom:25px}
+h2{font-size:clamp(29px,4vw,50px);line-height:1.14;margin:4px 0 8px}
+.desc{color:var(--muted);max-width:930px}
+.badge{border:1px solid #344250;border-radius:999px;padding:7px 11px;color:#afbbc7;font-size:12px}
+
+/* Main workday */
+.sim-shell{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(310px,.58fr);gap:18px}
+.sim-main{overflow:hidden}
+.sim-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:13px;border-bottom:1px solid #273440}
+.clock{display:flex;gap:10px;align-items:center}.clock strong{font-size:22px}
+.phase{font-size:12px;color:#96a4b1}
+.ticket{margin:14px 0;border:1px solid #364453;background:#121a22;border-radius:14px;padding:14px}
+.ticket-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ticket-id{direction:ltr;font-family:monospace;color:var(--amber)}
+.priority{font-size:11px;border-radius:999px;padding:4px 8px;border:1px solid #765e35;color:#f7cb7d}
+
+.system-map{
+  position:relative;min-height:470px;border:1px solid #273543;border-radius:18px;background:#0e141a;overflow:hidden;padding:17px;
+}
+.system-map:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#24313b22 1px,transparent 1px),linear-gradient(90deg,#24313b22 1px,transparent 1px);background-size:28px 28px}
+.app-layers{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.layer-card{border:1px solid #33414f;border-radius:14px;background:#121a22;padding:12px;min-height:150px}
+.layer-card.active{border-color:var(--emerald);box-shadow:0 0 0 1px rgba(79,209,165,.23),0 0 32px rgba(79,209,165,.08)}
+.layer-card h4{margin:0 0 7px;font-size:14px}
+.item{direction:ltr;text-align:left;border:1px solid #334553;background:#18232d;border-radius:9px;padding:8px 9px;margin:7px 0;font-size:12px;transition:.3s}
+.item.front{border-color:var(--indigo)}.item.api{border-color:var(--emerald)}.item.db{border-color:var(--amber)}.item.test{border-color:var(--sky)}.item.ops{border-color:var(--coral)}
+.runtime-row{position:relative;z-index:2;margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.runtime-box{border:1px solid #33414f;border-radius:13px;background:#111920;padding:12px;min-height:110px}
+.runtime-box.active{border-color:var(--amber)}
+.runtime-box b{display:block}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.chip{border:1px solid #34495a;border-radius:999px;padding:5px 8px;background:#18242e;font-size:11px}
+.chip.good{border-color:#367557;color:#a5e1c3}.chip.warn{border-color:#735b31;color:#f1ca7d}.chip.bad{border-color:#734146;color:#f1a3aa}
+
+.command{direction:ltr;text-align:left;margin-top:13px;border:1px solid #26343f;border-radius:13px;background:#080c10;padding:13px 14px;min-height:92px;overflow:auto}
+.prompt{color:var(--emerald)}.cmd{color:#edf3f6}.output{color:#8495a3;white-space:pre-wrap}
+.sim-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.timeline{display:flex;gap:6px;overflow:auto;padding:12px 0 2px}
+.time-step{min-width:112px;border-top:3px solid #33414e;padding-top:8px;color:#778897;font-size:11px}
+.time-step.done{border-color:var(--emerald);color:#9ed9c1}.time-step.current{border-color:var(--amber);color:white}.time-step b{display:block;font-size:12px}
+.explain{display:grid;gap:12px}
+.explain-card{border:1px solid #293744;border-radius:15px;background:#111921;padding:14px}
+.explain-card h3{font-size:16px;margin:0 0 5px}.explain-card p{font-size:14px;color:#aab6c1;margin:0}
+.why{border-right:3px solid var(--indigo)}.change{border-right:3px solid var(--emerald)}.senior{border-right:3px solid var(--amber)}.risk{border-right:3px solid var(--coral)}
+
+.grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.callout{border-right:3px solid var(--emerald);background:#111a17;padding:12px 14px;border-radius:10px;color:#becdc6}
+.callout.indigo{border-color:var(--indigo);background:#151728}.callout.amber{border-color:var(--amber);background:#221d13}.callout.coral{border-color:var(--coral);background:#241617}
+
+/* Request architecture */
+.arch-map{border:1px solid #2a3946;border-radius:18px;background:#0e141a;padding:17px;overflow:hidden}
+.arch-row{display:grid;grid-template-columns:repeat(7,1fr);gap:9px;align-items:center}
+.arch-box{border:1px solid #344250;border-radius:13px;background:#121a22;padding:11px;text-align:center;min-height:93px}
+.arch-box b{display:block;font-size:13px}.arch-box span{font-size:11px;color:#93a0ad}
+.arrow{text-align:center;color:#546675;font-size:24px}
+.request-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 14px var(--amber);margin-inline:4px;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+/* Frontend */
+.browser{border:1px solid #354351;border-radius:16px;background:#111820;overflow:hidden}
+.browser-bar{display:flex;gap:7px;align-items:center;padding:10px 12px;border-bottom:1px solid #2a3642;background:#171f28}
+.browser-dot{width:9px;height:9px;border-radius:50%;background:#465461}.browser-dot:nth-child(1){background:var(--coral)}.browser-dot:nth-child(2){background:var(--amber)}.browser-dot:nth-child(3){background:var(--emerald)}
+.browser-body{padding:16px;display:grid;grid-template-columns:.8fr 1.2fr;gap:12px}
+.ui-panel{border:1px solid #354451;border-radius:12px;background:#151f28;padding:12px}
+.form-row{height:36px;border:1px solid #3b4a58;background:#101820;border-radius:9px;margin:8px 0}
+.demo-field{display:grid;gap:6px;margin:10px 0}
+.demo-field label{font-size:12px;color:#aeb9c4}
+.demo-field select{width:100%;min-height:42px;border:1px solid #3b4a58;background:#0f171e;color:#eef3f6;border-radius:10px;padding:8px 10px;font:inherit}
+.demo-field select:focus,.btn:focus-visible{outline:2px solid var(--emerald);outline-offset:2px}
+.export-progress{height:12px;border-radius:999px;background:#222e38;overflow:hidden;margin:12px 0}
+.export-progress > span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--emerald),var(--amber));transition:width .28s ease;border-radius:999px}
+.export-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:#9eacb8}
+.export-log{direction:ltr;text-align:left;border:1px solid #2b3944;background:#0a0f14;border-radius:10px;padding:9px 10px;min-height:86px;max-height:126px;overflow:auto;font:11px/1.55 monospace;color:#8fa0ad;margin-top:10px}
+.export-log .okline{color:#7fd7ad}.export-log .warnline{color:#e7b85c}
+.status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid #394754;border-radius:999px;padding:5px 9px;background:#17212a;font-size:11px;color:#c4ced6}
+.status-pill .sdot{width:7px;height:7px;border-radius:50%;background:#6c7b86}
+.status-pill.processing .sdot{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+.status-pill.ready .sdot{background:var(--emerald);box-shadow:0 0 10px var(--emerald)}
+.status-pill.failed .sdot{background:var(--coral);box-shadow:0 0 10px var(--coral)}
+.skeleton{height:11px;border-radius:99px;background:#283643;margin:8px 0}.skeleton.s{width:58%}.skeleton.m{width:78%}
+.state-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:13px}
+.state-box{border:1px solid #33414f;border-radius:11px;padding:10px;text-align:center;background:#121a22;color:#c7d0d8;font-size:12px;cursor:pointer;min-height:46px}
+.state-box:hover{filter:brightness(1.08)}
+.state-box.active{border-color:var(--indigo);background:#191d32;box-shadow:inset 0 0 0 1px rgba(124,137,255,.22)}
+.state-box.failed.active{border-color:var(--coral);background:#29191a}
+.state-inspector{margin-top:12px;border:1px solid #33414f;border-radius:14px;background:#101820;padding:14px}
+.state-inspector-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.state-inspector-card{border:1px solid #2b3945;border-radius:11px;background:#141e27;padding:10px;min-height:98px}
+.state-inspector-card b{display:block;font-size:12px;margin-bottom:5px}
+.state-inspector-card span{font-size:12px;color:#9eacb8}
+.state-caption{font-size:13px;color:#b8c3cc}
+
+/* Backend */
+.api-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;align-items:center}
+.api-box{border:1px solid #344250;border-radius:13px;background:#121a22;padding:12px;text-align:center;min-height:95px}
+.api-box strong{display:block;font-size:13px}
+.api-box.auth{border-color:#6c6799}.api-box.service{border-color:#40785f}.api-box.queue{border-color:#7a6133}.api-box.storage{border-color:#5a6c8f}
+.code-sample{direction:ltr;text-align:left;border:1px solid #283641;border-radius:13px;background:#080c10;padding:14px;overflow:auto;font-size:12px;color:#cdd8df}
+.kw{color:#c49cff}.fn{color:#73d6b4}.str{color:#e8bd6a}.cm{color:#6f808e}
+
+/* DB */
+.db-schema{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center}
+.table-box{border:1px solid #3b4650;border-radius:14px;background:#121a22;overflow:hidden}
+.table-title{padding:10px 12px;background:#19242e;border-bottom:1px solid #34424f;font-weight:800}
+.field{padding:7px 12px;border-bottom:1px solid #222e38;font:12px monospace;color:#adb9c2}
+.relation{font-size:24px;color:var(--amber);text-align:center}
+.query-plan{display:grid;gap:8px;margin-top:12px}
+.plan-row{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;border:1px solid #2d3a46;border-radius:10px;padding:8px 10px;background:#101820}
+.cost{font:11px monospace;color:#e4bd74}
+
+/* PR review */
+.review-board{display:grid;grid-template-columns:.85fr 1.3fr .85fr;gap:12px;align-items:start}
+.review-col{border:1px solid #32404d;border-radius:14px;background:#111920;padding:13px}
+.diff{direction:ltr;text-align:left;font-family:monospace;font-size:12px;border-radius:11px;overflow:hidden;border:1px solid #2b3944}
+.diff-line{padding:6px 9px}.diff-line.add{background:#123024;color:#a7e2c3}.diff-line.del{background:#32191b;color:#f0a4aa}.diff-line.ctx{background:#0c1217;color:#81909c}
+.comment{border:1px solid #3b4855;border-radius:10px;padding:9px;background:#17212a;margin-top:9px}
+
+/* testing pyramid */
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px}
+.py{height:58px;border-radius:12px;display:grid;place-items:center;font-weight:800}
+.py.e2e{width:35%;background:#2a2230;border:1px solid #6d4c6e;color:#efb2e1}
+.py.int{width:58%;background:#1e2638;border:1px solid #5262a4;color:#bdc6ff}
+.py.unit{width:82%;background:#142a23;border:1px solid #3b7b60;color:#b1e4ca}
+
+/* performance */
+.perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.waterfall{border:1px solid #2b3945;border-radius:14px;background:#0e141a;padding:13px}
+.bar-row{display:grid;grid-template-columns:100px 1fr 52px;gap:8px;align-items:center;margin:9px 0;font-size:12px}
+.bar-track{height:12px;background:#202b35;border-radius:99px;overflow:hidden}.bar-fill{height:100%;border-radius:99px;background:var(--emerald)}.bar-fill.indigo{background:var(--indigo)}.bar-fill.amber{background:var(--amber)}.bar-fill.coral{background:var(--coral)}
+.cache-map{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.cache-box{border:1px solid #344250;border-radius:13px;padding:12px;text-align:center;background:#121a22}
+
+/* incident */
+.incident{display:grid;grid-template-columns:.78fr 1.22fr;gap:18px}
+.incident-actions{display:grid;gap:9px}.incident-actions button{text-align:right}.incident-result{min-height:155px}
+.logs{direction:ltr;text-align:left;background:#080c10;border:1px solid #27353f;border-radius:13px;padding:13px;font-family:monospace;font-size:12px;overflow:auto}
+.info{color:#8bb7d3}.warn-t{color:#e7b85c}.err{color:#eb8585}.ok-t{color:#67c997}
+
+/* senior matrix */
+.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{border-bottom:1px solid #27333e;padding:11px;text-align:right;vertical-align:top}.table th{color:#dde5eb}.table td{color:#a7b3be}
+.quiz{display:grid;gap:9px}.quiz button{text-align:right}.result{min-height:26px;font-weight:800;margin-top:7px}.ok{color:var(--good)}.bad{color:var(--bad)}
+.footer{padding:45px 0 70px;color:#7f8e9c}
+
+@media(max-width:1040px){
+ .hero-grid,.sim-shell,.g2,.g3,.perf-grid,.incident{grid-template-columns:1fr}
+ .app-layers,.runtime-row{grid-template-columns:1fr 1fr}
+ .arch-row{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}
+ .browser-body,.review-board{grid-template-columns:1fr}
+ .api-flow{grid-template-columns:1fr}.db-schema{grid-template-columns:1fr}.relation{transform:rotate(90deg)}
+}
+@media(max-width:660px){
+ .app-layers,.runtime-row,.team,.mode-toggle,.state-flow,.cache-map,.state-inspector-grid{grid-template-columns:1fr}
+ h1{font-size:42px}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-mode="simple">
+<div class="progress" id="progress"></div>
+
+<nav>
+  <div class="wrap nav">
+    <a href="#day">يوم الشغل</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#frontend">Frontend</a>
+    <a href="#backend">Backend</a>
+    <a href="#database">Database</a>
+    <a href="#review">Code Review</a>
+    <a href="#testing">Testing</a>
+    <a href="#performance">Performance</a>
+    <a href="#incident">Incident</a>
+    <a href="#senior">Senior Thinking</a>
+  </div>
+</nav>
+
+<header class="wrap">
+  <div class="eyebrow"><span class="live"></span> Orbit SaaS • Senior Full‑Stack Engineer Workday</div>
+  <h1>يوم كامل في حياة<br><span class="grad">Senior Full‑Stack Engineer</span></h1>
+  <p class="lead">مش “Frontend + Backend” وخلاص. الـSenior بيربط الـProduct بالArchitecture، يكتب كود، يراجع كود، يصمم API وDatabase، يحل performance وproduction bugs، ويساعد الفريق ياخد قرارات أقل مخاطرة.</p>
+
+  <div class="hero-grid">
+    <div class="card">
+      <div class="kicker">طريقة الشرح</div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="simple">Simple View<br><span class="small">الفكرة ببساطة</span></button>
+        <button class="mode-btn" data-mode="deep">Deep Dive<br><span class="small">تفكير Senior بالتفصيل</span></button>
+      </div>
+      <div id="modeDetail" class="mode-detail">Simple View: هنشرح كل خطوة بلغة مباشرة: إيه اللي بيحصل؟ ليه؟ وإيه الناتج؟</div>
+      <div class="actions" style="margin-top:14px"><a class="btn primary" href="#day">ابدأ اليوم ↓</a></div>
+    </div>
+    <div class="card">
+      <div class="kicker">الفريق النهاردة</div>
+      <div class="team" style="margin-top:12px">
+        <div class="person"><div class="avatar you">YOU</div><b>أنت</b><span class="small">Senior Full‑Stack</span></div>
+        <div class="person"><div class="avatar">PM</div><b>Maya</b><span class="small">Product Manager</span></div>
+        <div class="person"><div class="avatar">FE</div><b>Adam</b><span class="small">Frontend Engineer</span></div>
+        <div class="person"><div class="avatar">BE</div><b>Lina</b><span class="small">Backend Engineer</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="day">
+<div class="wrap">
+  <div class="section-head">
+    <div>
+      <div class="kicker">09:00 → 18:30 • REAL PRODUCT DAY</div>
+      <h2>المحاكاة الرئيسية: Feature كاملة من الفكرة لحد Production</h2>
+      <p class="desc">Ticket اليوم: العملاء اللي عندهم آلاف الفواتير عايزين Export كبير من غير ما المتصفح يهنج أو الـAPI timeout. ده Feature مثالية تبين شغل Full‑Stack فعليًا.</p>
+    </div><div class="badge">24 خطوة واقعية</div>
+  </div>
+
+  <div class="sim-shell">
+    <div class="panel sim-main">
+      <div class="sim-top">
+        <div class="clock"><strong id="simClock">09:00</strong><div><b id="simTitle">Standup</b><div class="phase" id="simPhase">Morning</div></div></div>
+        <div class="badge" id="stepBadge">Step 1 / 24</div>
+      </div>
+
+      <div class="ticket">
+        <div class="ticket-top">
+          <div><span class="ticket-id">BILL-1842</span> <b>Large invoice export</b></div>
+          <span class="priority">Customer impact</span>
+        </div>
+        <div class="small">المطلوب: المستخدم يطلب Export حتى 50,000 invoice. العملية تكون async، يظهر progress، وبعد الانتهاء ينزل CSV آمن من Object Storage.</div>
+      </div>
+
+      <div class="system-map">
+        <div class="app-layers">
+          <div class="layer-card active" id="layerUI"><h4>① Frontend</h4><div class="small">React / Next.js</div><div id="uiItems"></div></div>
+          <div class="layer-card" id="layerAPI"><h4>② API</h4><div class="small">Node / TypeScript</div><div id="apiItems"></div></div>
+          <div class="layer-card" id="layerData"><h4>③ Data</h4><div class="small">Postgres / Redis</div><div id="dataItems"></div></div>
+          <div class="layer-card" id="layerAsync"><h4>④ Async</h4><div class="small">Queue / Worker / Storage</div><div id="asyncItems"></div></div>
+        </div>
+
+        <div class="runtime-row">
+          <div class="runtime-box" id="runtimeTests"><b>🧪 Tests</b><div class="chips" id="testChips"></div></div>
+          <div class="runtime-box" id="runtimeReview"><b>🔍 Review</b><div class="chips" id="reviewChips"></div></div>
+          <div class="runtime-box" id="runtimeCI"><b>🚦 CI / Deploy</b><div class="chips" id="ciChips"></div></div>
+          <div class="runtime-box" id="runtimeObs"><b>📈 Production</b><div class="chips" id="obsChips"></div></div>
+        </div>
+      </div>
+
+      <div class="command">
+        <div><span class="prompt">$</span> <span class="cmd" id="simCommand">git pull --ff-only</span></div>
+        <div class="output" id="simOutput">main is up to date.</div>
+      </div>
+
+      <div class="sim-controls">
+        <button class="btn primary" id="nextStep">الخطوة التالية →</button>
+        <button class="btn" id="prevStep">← رجوع</button>
+        <button class="btn" id="autoPlay">▶ شغّل اليوم تلقائيًا</button>
+        <button class="btn" id="restart">↻ بداية اليوم</button>
+      </div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <aside class="explain">
+      <div class="explain-card why"><h3>الموقف في الشركة</h3><p id="companySituation"></p></div>
+      <div class="explain-card change"><h3>إيه اللي بنبنيه أو نغيّره؟</h3><p id="actualChange"></p></div>
+      <div class="explain-card senior"><h3 id="thinkingTitle">الشرح ببساطة</h3><p id="thinkingText"></p></div>
+      <div class="explain-card risk"><h3>Senior بيبص على إيه؟</h3><p id="riskText"></p></div>
+    </aside>
+  </div>
+</div>
+</section>
+
+<section id="architecture">
+<div class="wrap">
+  <div class="section-head">
+    <div><div class="kicker">SYSTEM DESIGN</div><h2>قبل ما نكتب كود: الـRequest هتمشي فين؟</h2><p class="desc">الـSenior غالبًا يوفر على الفريق ساعات شغل لما يرسم flow صح قبل implementation.</p></div>
+    <div class="badge">Request journey</div>
+  </div>
+
+  <div class="arch-map">
+    <div class="arch-row">
+      <div class="arch-box"><b>User</b><span>ضغط Export</span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><b>Frontend</b><span>POST /exports</span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><b>API</b><span>Validate + authorize</span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><b>DB</b><span>Create export_job</span></div>
+    </div>
+    <div class="arch-row" style="margin-top:10px">
+      <div class="arch-box"><b>Queue</b><span>Job ID <i class="request-dot"></i></span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><b>Worker</b><span>stream invoices</span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><b>Object Storage</b><span>CSV file</span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><b>Frontend</b><span>Download ready</span></div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3>ليه مش Request عادية؟</h3><p>50,000 invoice ممكن تاخد ثواني أو دقائق. لو خلت browser مستني HTTP request طويلة، timeout واحتمالات الفشل يزيدوا.</p></div>
+    <div class="card"><h3>ليه Queue؟</h3><p>نفصل قبول الطلب عن تنفيذ الشغل الثقيل. الـAPI ترد بسرعة والـworker يشتغل في الخلفية.</p></div>
+    <div class="card"><h3>ليه Object Storage؟</h3><p>بدل ما الـAPI تحمل ملف كبير في الذاكرة، نخزنه في مكان مناسب للملفات ونرجع signed URL مؤقت.</p></div>
+  </div>
+</div>
+</section>
+
+<section id="frontend">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">FRONTEND WORK</div><h2>Frontend Senior مش بس بيعمل Button</h2><p class="desc">بيفكر في UX states، accessibility، caching، retries، performance، وcontract مع الـbackend.</p></div><div class="badge">React / Next.js</div></div>
+
+  <div class="browser">
+    <div class="browser-bar"><span class="browser-dot"></span><span class="browser-dot"></span><span class="browser-dot"></span><span class="small">billing.orbit.app/invoices</span></div>
+    <div class="browser-body">
+      <div class="ui-panel">
+        <b>Export invoices</b>
+        <div class="demo-field">
+          <label for="exportSize">Dataset size</label>
+          <select id="exportSize">
+            <option value="10000">10,000 invoices</option>
+            <option value="25000">25,000 invoices</option>
+            <option value="50000" selected>50,000 invoices</option>
+          </select>
+        </div>
+        <div class="demo-field">
+          <label for="exportFormat">File format</label>
+          <select id="exportFormat">
+            <option value="csv" selected>CSV</option>
+            <option value="json">JSON</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="exportStart" style="flex:1">Start export</button>
+          <button class="btn danger" id="exportCancel" disabled>Cancel</button>
+        </div>
+      </div>
+
+      <div class="ui-panel">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+          <b>Export status</b>
+          <span class="status-pill" id="exportStatusPill"><span class="sdot"></span><span id="exportStatusLabel">Idle</span></span>
+        </div>
+        <div class="export-progress" aria-label="Export progress"><span id="exportProgressBar"></span></div>
+        <div class="export-meta">
+          <span id="exportProgressText">0% — Nothing running</span>
+          <span id="exportJobId" dir="ltr">job: —</span>
+        </div>
+        <div class="export-log" id="exportLog">UI ready. Choose options and press Start export.</div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn good" id="exportDownload" disabled>Download file</button>
+          <button class="btn" id="exportReset">Reset demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="state-flow" id="exportStateFlow" aria-label="Export UI state previews">
+    <button type="button" class="state-box active" data-export-state="idle">Idle</button>
+    <button type="button" class="state-box" data-export-state="submitting">Submitting</button>
+    <button type="button" class="state-box" data-export-state="processing">Processing</button>
+    <button type="button" class="state-box" data-export-state="ready">Ready</button>
+    <button type="button" class="state-box failed" data-export-state="failed">Failed</button>
+  </div>
+
+  <div class="state-inspector" id="exportStateInspector">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+      <div><b id="stateInspectorTitle">Idle</b><div class="state-caption" id="stateInspectorCaption">المستخدم لسه ما بدأش أي Export.</div></div>
+      <span class="badge" id="stateInspectorBadge">UI only</span>
+    </div>
+    <div class="state-inspector-grid">
+      <div class="state-inspector-card"><b>Frontend</b><span id="stateFrontendExplain">الزر متاح، ومفيش progress أو job شغالة.</span></div>
+      <div class="state-inspector-card"><b>Backend / API</b><span id="stateBackendExplain">مفيش request اتبعتت للسيرفر.</span></div>
+      <div class="state-inspector-card"><b>UX / Risk</b><span id="stateRiskExplain">الحالة بسيطة: المستخدم يقدر يختار options ويبدأ.</span></div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3>State Model</h3><p>ما تعتبرش كل حاجة boolean. صمّم states صريحة عشان تمنع UI مستحيلة زي “loading + ready” في نفس الوقت.</p></div>
+    <div class="card"><h3>API Contract</h3><p>الFrontend محتاجة contract واضح: job ID، status، progress، error code، download URL.</p></div>
+    <div class="card"><h3>UX Failure</h3><p>لو tab اتقفلت، المستخدم لازم يقدر يرجع يشوف export القديمة بدل ما العملية تضيع من UI.</p></div>
+  </div>
+</div>
+</section>
+
+<section id="backend">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">BACKEND WORK</div><h2>API صغيرة… لكن قراراتها كبيرة</h2></div><div class="badge">Node.js / TypeScript</div></div>
+
+  <div class="api-flow">
+    <div class="api-box auth"><strong>Route</strong><span class="small">POST /exports</span></div>
+    <div class="arrow">→</div>
+    <div class="api-box auth"><strong>AuthZ</strong><span class="small">canExportInvoices?</span></div>
+    <div class="arrow">→</div>
+    <div class="api-box service"><strong>Service</strong><span class="small">create export job</span></div>
+  </div>
+  <div class="api-flow" style="margin-top:10px">
+    <div class="api-box queue"><strong>Queue</strong><span class="small">enqueue job</span></div>
+    <div class="arrow">→</div>
+    <div class="api-box service"><strong>Worker</strong><span class="small">stream rows</span></div>
+    <div class="arrow">→</div>
+    <div class="api-box storage"><strong>Storage</strong><span class="small">upload CSV</span></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="code-sample"><span class="kw">async function</span> <span class="fn">createExport</span>(user, filters) {
+  assertPermission(user, <span class="str">"invoice:export"</span>);
+  <span class="kw">const</span> job = <span class="kw">await</span> exportRepo.create({ userId: user.id, filters });
+  <span class="kw">await</span> queue.publish(<span class="str">"invoice-export"</span>, { jobId: job.id });
+  <span class="kw">return</span> { id: job.id, status: <span class="str">"queued"</span> };
+}</div>
+    <div class="card">
+      <h3>Senior decisions</h3>
+      <div class="callout indigo">Idempotency: لو client كرر الطلب بسبب network retry، هل هنعمل exports مكررة؟</div>
+      <div class="callout amber" style="margin-top:9px">Authorization: مين يقدر يصدر invoices لأي account؟</div>
+      <div class="callout coral" style="margin-top:9px">Failure semantics: job فشلت بعد 38,000 row — retry من البداية ولا checkpoint؟</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="database">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">DATABASE</div><h2>الـSenior بيفكر في الـData قبل ORM</h2></div><div class="badge">Postgres</div></div>
+
+  <div class="db-schema">
+    <div class="table-box"><div class="table-title">accounts</div><div class="field">id PK</div><div class="field">name</div></div>
+    <div class="relation">1 → N</div>
+    <div class="table-box"><div class="table-title">invoices</div><div class="field">id PK</div><div class="field">account_id FK</div><div class="field">created_at</div><div class="field">status</div></div>
+    <div class="relation">1 → N</div>
+    <div class="table-box"><div class="table-title">export_jobs</div><div class="field">id PK</div><div class="field">account_id</div><div class="field">status</div><div class="field">file_key</div></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card">
+      <h3>Query plan mental model</h3>
+      <div class="query-plan">
+        <div class="plan-row"><b>Filter account</b><span>account_id = ?</span><span class="cost">cheap</span></div>
+        <div class="plan-row"><b>Date range</b><span>created_at BETWEEN ? AND ?</span><span class="cost">depends on index</span></div>
+        <div class="plan-row"><b>Sort</b><span>ORDER BY created_at</span><span class="cost">can be expensive</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>مش هنعمل SELECT * وخلاص</h3>
+      <p>50k rows مش رقم ضخم جدًا للـDB، لكن تحميلهم كلهم في memory مرة واحدة في Node ممكن يبقى unnecessary.</p>
+      <div class="callout">الأفضل غالبًا pagination/cursor أو streaming حسب driver والحالة.</div>
+      <div class="callout amber" style="margin-top:9px">Index مفيد لما يتطابق مع patterns حقيقية للqueries، مش لمجرد “نزود indexes”.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="review">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">CODE REVIEW</div><h2>الـSenior Review مش “LGTM”</h2></div><div class="badge">Correctness • Maintainability • Risk</div></div>
+
+  <div class="review-board">
+    <div class="review-col">
+      <b>PR Context</b>
+      <p class="small">BILL-1842 • 19 files • +612 / -84</p>
+      <div class="comment">Goal واضح؟ Scope معقول؟ فيه migration؟</div>
+      <div class="comment">هل rollout reversible؟</div>
+    </div>
+    <div class="review-col">
+      <b>Diff</b>
+      <div class="diff" style="margin-top:10px">
+        <div class="diff-line ctx">for (const invoice of invoices) {</div>
+        <div class="diff-line del">- rows.push(formatInvoice(invoice));</div>
+        <div class="diff-line add">+ await csvStream.write(formatInvoice(invoice));</div>
+        <div class="diff-line ctx">}</div>
+      </div>
+      <div class="comment"><b>Senior comment:</b> ممتاز إننا خرجنا من in-memory accumulation. خلينا كمان نتحقق من backpressure/error handling للstream.</div>
+    </div>
+    <div class="review-col">
+      <b>Review Lens</b>
+      <div class="chips">
+        <span class="chip good">Correctness</span><span class="chip good">Tests</span><span class="chip warn">Performance</span><span class="chip warn">Security</span><span class="chip">Naming</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="testing">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">TEST STRATEGY</div><h2>مش كل حاجة E2E</h2></div><div class="badge">Fast feedback → Confidence</div></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="pyramid">
+        <div class="py e2e">E2E — قليل لكن مهم</div>
+        <div class="py int">Integration — DB / Queue / API</div>
+        <div class="py unit">Unit — business rules كثيرة وسريعة</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Feature دي محتاجة إيه؟</h3>
+      <p><b>Unit:</b> filters، permission rules، CSV formatting.</p>
+      <p><b>Integration:</b> create job → queue → worker → storage metadata.</p>
+      <p><b>E2E:</b> user يطلب export ويشوف Ready ثم يحمل الملف.</p>
+      <div class="callout coral">Test مش هدفها تثبت إن الكود اتكتب؛ هدفها تمنع behavior مهم من الانكسار.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="performance">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">PERFORMANCE</div><h2>الـSenior بيدور على الـBottleneck الحقيقي</h2></div><div class="badge">Measure first</div></div>
+
+  <div class="perf-grid">
+    <div class="waterfall">
+      <b>Export processing time</b>
+      <div class="bar-row"><span>DB query</span><div class="bar-track"><div class="bar-fill amber" style="width:68%"></div></div><span>3.4s</span></div>
+      <div class="bar-row"><span>CSV format</span><div class="bar-track"><div class="bar-fill indigo" style="width:34%"></div></div><span>1.7s</span></div>
+      <div class="bar-row"><span>Upload</span><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><span>1.1s</span></div>
+      <div class="bar-row"><span>Queue wait</span><div class="bar-track"><div class="bar-fill coral" style="width:12%"></div></div><span>0.6s</span></div>
+    </div>
+    <div class="card">
+      <h3>قبل Optimization</h3>
+      <p>أكبر تكلفة هنا الـDB query. تغيير React rendering مش هيحل المشكلة.</p>
+      <div class="cache-map">
+        <div class="cache-box"><b>Measure</b><span class="small">profiling / traces</span></div>
+        <div class="cache-box"><b>Find</b><span class="small">real bottleneck</span></div>
+        <div class="cache-box"><b>Change</b><span class="small">smallest useful fix</span></div>
+      </div>
+      <div class="callout" style="margin-top:12px">Senior performance work = Evidence → Hypothesis → Change → Measure again.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="incident">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">16:40 • PRODUCTION BUG</div><h2>بعد Deploy: Workers بدأت تستهلك Memory بسرعة</h2><p class="desc">دلوقتي بنشوف Senior Full‑Stack وهو بيشتغل تحت ضغط، لكن من غير عشوائية.</p></div><div class="badge">Debugging</div></div>
+
+  <div class="incident">
+    <div class="card incident-actions">
+      <button class="btn" data-incident="logs">أقرأ Metrics + Logs + traces</button>
+      <button class="btn" data-incident="restart">Restart workers فورًا</button>
+      <button class="btn" data-incident="disable">أوقف feature flag مؤقتًا</button>
+      <button class="btn" data-incident="rollback">Rollback release</button>
+      <button class="btn" data-incident="patch">أعمل hotfix streaming bug</button>
+    </div>
+    <div class="card incident-result" id="incidentResult">
+      <h3>الموقف</h3>
+      <div class="logs">
+        <div class="info">16:39 INFO export job=ex_442 rows=32000</div>
+        <div class="warn-t">16:40 WARN worker rss=1.4GB</div>
+        <div class="err">16:40 ERROR worker killed OOM</div>
+        <div class="err">16:41 ERROR export ex_442 failed</div>
+      </div>
+      <p>اختار أول تصرف.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="senior">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">WHAT MAKES IT SENIOR?</div><h2>الفرق مش عدد Frameworks اللي حافظها</h2></div></div>
+
+  <div class="card">
+    <table class="table">
+      <tr><th>الموقف</th><th>Engineer عادي</th><th>Senior Full‑Stack</th></tr>
+      <tr><td>Feature جديدة</td><td>يبدأ implementation</td><td>يفهم user outcome، constraints، data flow، failure modes قبل الكود</td></tr>
+      <tr><td>Frontend</td><td>يعمل component شغالة</td><td>يفكر في state model، accessibility، performance، API contract، failure UX</td></tr>
+      <tr><td>Backend</td><td>يعمل endpoint</td><td>يفكر auth، idempotency، transactions، concurrency، observability، retries</td></tr>
+      <tr><td>Database</td><td>يكتب ORM query</td><td>يفهم access patterns، indexes، query plan، consistency، migrations</td></tr>
+      <tr><td>Code Review</td><td>يدور على bugs</td><td>يراجع correctness، design، maintainability، rollout، tests، security</td></tr>
+      <tr><td>Production bug</td><td>يبدأ يغير كود</td><td>يقيس impact، يجمع evidence، يعمل mitigation، ثم يصلح root cause</td></tr>
+      <tr><td>Team</td><td>ينجز task بنفسه</td><td>يرفع مستوى الفريق، يوضح tradeoffs، ويمنع مشاكل قبل ما تظهر</td></tr>
+    </table>
+  </div>
+
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><h3>Product Thinking</h3><p>“هل دي المشكلة الصح أصلًا؟ وهل أبسط حل يحقق قيمة للمستخدم؟”</p></div>
+    <div class="card"><h3>Technical Judgment</h3><p>“إيه tradeoff المناسب هنا؟ مش إيه أحدث technology؟”</p></div>
+    <div class="card"><h3>Ownership</h3><p>“هل الحل هيفضل مفهوم، قابل للمراقبة، والرجوع عنه بعد ما أنا أمشي من المهمة؟”</p></div>
+  </div>
+</div>
+</section>
+
+<section id="quiz">
+<div class="wrap">
+  <div class="section-head"><div><div class="kicker">END OF DAY CHECK</div><h2>5 مواقف Senior حقيقية</h2></div></div>
+  <div class="grid g2">
+    <div class="card quiz" data-answer="2"><b>Export 50k rows. أنسب تصميم كبداية؟</b><button class="btn">HTTP request تفضل مفتوحة لحد الملف يخلص</button><button class="btn">Async job + queue + worker + storage</button><button class="btn">نزود timeout لـ10 دقائق</button><div class="result"></div></div>
+    <div class="card quiz" data-answer="3"><b>Memory بتزيد في worker. أول خطوة؟</b><button class="btn">Rewrite service</button><button class="btn">Scale workers ×10</button><button class="btn">Measure memory profile/logs وربطها بحجم jobs</button><div class="result"></div></div>
+    <div class="card quiz" data-answer="1"><b>Frontend أعادت POST بسبب network retry. إيه اللي يقلل duplicate jobs؟</b><button class="btn">Idempotency key / request deduplication</button><button class="btn">CSS debounce</button><button class="btn">Index جديد فقط</button><div class="result"></div></div>
+    <div class="card quiz" data-answer="2"><b>Query بطيئة. تعمل إيه قبل إضافة index؟</b><button class="btn">تزود RAM فورًا</button><button class="btn">تشوف query plan وaccess pattern</button><button class="btn">تنقل DB لنوع مختلف</button><div class="result"></div></div>
+    <div class="card quiz" data-answer="3"><b>Production متأثرة بعد deploy.</b><button class="btn">تكمل feature وتصلح بعدين</button><button class="btn">تعمل refactor شامل</button><button class="btn">Mitigate impact أولًا ثم RCA/fix</button><div class="result"></div></div>
+  </div>
+</div>
+</section>
+
+<footer class="wrap footer">Senior Full‑Stack Workday Simulator • Product + Frontend + Backend + Data + Production</footer>
+
+<script>
+(()=>{
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const body=document.body;
+
+const modeCopy={
+ simple:"Simple View: هنشرح كل خطوة بلغة مباشرة: إيه اللي بيحصل؟ ليه؟ وإيه الناتج؟",
+ deep:"Deep Dive: هنضيف tradeoffs، failure modes، scalability، security، وقرارات Senior اللي مش ظاهرة في الكود."
+};
+
+const steps=[
+{time:"09:00",phase:"Morning",title:"Standup",cmd:"git pull --ff-only",out:"main is up to date.",situation:"الفريق بيبدأ اليوم. PM بتوضح إن Enterprise customer مستني Export كبيرة للفواتير.",change:"لسه مفيش كود. أنت بتجمع context: المستخدم مين؟ الحجم قد إيه؟ وهل فيه deadline أو compliance؟",simple:"قبل ما تكتب أي سطر، افهم المشكلة والنتيجة المطلوبة.",deep:"Senior يبدأ من constraints: 50k rows، multi-tenant auth، async UX، storage retention، observability، وrollback.",risk:"لو فهمت الـticket كـ“اعمل زر Export” هتبني حل ناقص.",state:"plan"},
+{time:"09:20",phase:"Discovery",title:"Clarify requirements",cmd:"notes: max=50k • CSV • async • 24h link",out:"Acceptance criteria agreed.",situation:"بتسأل PM وSupport عن حجم البيانات وطريقة الاستخدام.",change:"اتحدد contract للfeature قبل implementation.",simple:"بنحدد بالضبط المستخدم هيشوف إيه وإيه يعتبر نجاح.",deep:"دي مرحلة تقلل ambiguity. Senior يحول الكلام العام إلى explicit constraints قابلة للاختبار.",risk:"Unclear requirements بتتحول بعدين لbugs واختلافات بين frontend/backend.",state:"plan"},
+{time:"09:40",phase:"Design",title:"Sketch data flow",cmd:"design: API → DB job → Queue → Worker → Storage",out:"Async architecture selected.",situation:"Request ممكن تاخد وقت طويل، فبتصممها async.",change:"اتفقنا إن API تنشئ job وترجع بسرعة، والworker يعمل الشغل الثقيل.",simple:"بدل ما المستخدم يستنى request طويلة، ندي له job ويتابع progress.",deep:"الاختيار يفصل request latency عن job duration ويتيح retries وbackpressure وإدارة concurrency.",risk:"Async architecture بتضيف complexity؛ لازم status model وretry semantics يبقوا واضحين.",state:"design"},
+{time:"10:00",phase:"Design",title:"Define API contract",cmd:"POST /v1/invoice-exports",out:"202 Accepted → { id, status: 'queued' }",situation:"Frontend وBackend محتاجين contract قبل ما يشتغلوا بالتوازي.",change:"حددنا request/response وstatus values وerror codes.",simple:"الاتنين دلوقتي عارفين بيتكلموا مع بعض بإيه.",deep:"Contract واضح يقلل coupling. Senior يحدد semantics: 202، idempotency، pagination للhistory، authorization errors.",risk:"لو contract يتغير كل ساعة، شغل الفريق هيتعطل.",state:"api"},
+{time:"10:15",phase:"Data",title:"Design export_jobs table",cmd:"migration: create table export_jobs (...)",out:"Schema reviewed locally.",situation:"محتاجين نخزن حالة الـjob عشان المستخدم يرجع لها.",change:"أضفنا entity واضحة للjob بدل state في memory.",simple:"الـDB هتفتكر إن job دي queued/processing/ready/failed.",deep:"Senior يفكر في tenant key، timestamps، retry_count، file_key، retention، indexes، ومين يقدر يقرأ row.",risk:"State machine غير واضحة تسبب jobs معلقة أو transitions مستحيلة.",state:"data"},
+{time:"10:30",phase:"Backend",title:"Implement create endpoint",cmd:"pnpm test export-service",out:"createExport() tests ✓",situation:"بتبدأ بأصغر vertical slice: user يطلب export وتظهر job.",change:"Route + authorization + service + repository اتوصلوا.",simple:"الAPI دلوقتي تقدر تستقبل الطلب وتعمل job.",deep:"افصل transport عن business logic. خليك قادر تختبر service بدون HTTP كامل.",risk:"Authorization لازم تعتمد tenant/account boundaries مش مجرد user logged-in.",state:"api"},
+{time:"10:50",phase:"Backend",title:"Add idempotency",cmd:"Idempotency-Key: exp_01H...",out:"Duplicate POST returns existing job.",situation:"Browser أو proxy ممكن يعيد request لو network قطعت.",change:"نفس الطلب المنطقي مبقاش يعمل job مكررة.",simple:"لو نفس الطلب اتبعت مرتين بالغلط، نرجع نفس job بدل نسختين.",deep:"Idempotency design يعتمد scope وTTL والتخزين. المفتاح لازم يرتبط بالمستخدم/tenant والpayload المتوقع.",risk:"Duplicate exports ممكن تزود load وتعمل confusion للمستخدم.",state:"api"},
+{time:"11:10",phase:"Async",title:"Queue the job",cmd:"queue.publish('invoice-export', { jobId })",out:"job queued.",situation:"الـAPI خلصت دورها بسرعة وبتسلم التنفيذ للworker.",change:"اتضاف message للqueue والjob بقت queued.",simple:"Queue = طابور شغل. Worker ياخد job لما يبقى جاهز.",deep:"Queue تضيف durability/backpressure. فكر في delivery semantics، visibility timeout، retries، dead-letter queue.",risk:"Message retry بدون idempotent worker ممكن يكرر side effects.",state:"async"},
+{time:"11:30",phase:"Backend",title:"Implement worker",cmd:"pnpm test invoice-export-worker",out:"worker streams rows → CSV.",situation:"الworker بيقرأ invoices ويكتب CSV.",change:"استخدمنا streaming بدل تجميع كل rows في array كبيرة.",simple:"بدل ما نحط 50k row في RAM، بنكتبهم تدريجيًا.",deep:"Streaming يقلل peak memory ويحتاج backpressure/error handling واضح.",risk:"لو stream error حصل في النص لازم cleanup للpartial file وتحديث job.",state:"async"},
+{time:"11:50",phase:"Data",title:"Tune DB access",cmd:"EXPLAIN ANALYZE SELECT ...",out:"index scan • 3.4s → 0.9s",situation:"الworker شغال لكن query أبطأ من المتوقع.",change:"راجعنا query plan وعدلنا index مناسب لـaccount_id + created_at.",simple:"بصينا DB بتدور على البيانات إزاي وساعدناها توصل أسرع.",deep:"الindex مبني على access pattern حقيقي، مش optimization عشوائي. راقب write cost وحجم index.",risk:"Indexes الكثيرة بتبطئ writes وتستهلك storage/cache.",state:"data"},
+{time:"12:10",phase:"Frontend",title:"Build export UX",cmd:"pnpm test InvoiceExportPanel",out:"UI states: idle → queued → processing → ready.",situation:"Frontend بتبني flow واضح للمستخدم.",change:"عملنا state model بدل boolean loading فقط.",simple:"المستخدم يقدر يفهم العملية واقفة فين.",deep:"State machine تمنع impossible UI states، وتخلي retry/error UX قابلة للتوقع.",risk:"Polling سريع جدًا يضغط API؛ بطيء جدًا يخلي UX تحس إنها معلقة.",state:"ui"},
+{time:"12:30",phase:"Frontend",title:"Add status polling",cmd:"GET /v1/invoice-exports/:id every 3s",out:"progress updates visible.",situation:"المستخدم محتاج progress لحد الملف يجهز.",change:"Frontend بقت تجيب status دوريًا وتتوقف عند terminal state.",simple:"كل شوية نسأل: job وصلت لفين؟",deep:"ممكن تستخدم polling أو SSE/WebSocket حسب scale والمنتج. اختار أبسط حل كافي.",risk:"لا تعمل interval يفضل شغال بعد unmount أو بعد Ready.",state:"ui"},
+{time:"13:00",phase:"Lunch / Pairing",title:"Pair with teammate",cmd:"review edge cases together",out:"cancel + expired link behavior agreed.",situation:"بدل ما تحتفظ بكل المعرفة عندك، بتشارك التصميم مع Lina.",change:"اتحدد سلوك cancel والexpired URLs.",simple:"Senior مش بيشتغل لوحده؛ بيخلّي الفريق فاهم القرار.",deep:"Pairing هنا نقل context مبكرًا وتقليل bus factor، مش micromanagement.",risk:"حل عبقري محدش فاهمه غيرك يعتبر debt.",state:"review"},
+{time:"13:30",phase:"Testing",title:"Integration tests",cmd:"pnpm test:integration exports",out:"API → queue → worker → storage ✓",situation:"Unit tests مش كفاية للflow الموزع.",change:"ثبتنا إن المكونات الأساسية تشتغل مع بعض.",simple:"بنختبر الرحلة مش function واحدة.",deep:"Integration tests تمسك contract breaks بين DB/queue/storage. حافظ عليها deterministic وسريعة قدر الإمكان.",risk:"Mock كل حاجة ممكن يخلي test خضراء والنظام الحقيقي مكسور.",state:"tests"},
+{time:"13:50",phase:"Testing",title:"E2E happy path",cmd:"playwright test invoice-export.spec.ts",out:"user requests → waits → downloads ✓",situation:"بنتأكد من user journey كاملة.",change:"Browser test أثبت الـUX الأساسية.",simple:"اختبار بيتصرف زي المستخدم الحقيقي.",deep:"E2E قليلة ومهمة. ما تحولش كل business rule إلى browser test بطيء.",risk:"E2E غير مستقرة تعمل noise وتقتل ثقة الفريق في CI.",state:"tests"},
+{time:"14:10",phase:"Review",title:"Open Pull Request",cmd:"git push && gh pr create",out:"PR #982 opened.",situation:"الfeature أصبحت قابلة للمراجعة.",change:"الكود منشور مع context وtest plan وscreenshots/migration notes.",simple:"دلوقتي الفريق يراجع شغلك.",deep:"Senior PR تسهّل review: scope واضح، architecture note، risk، rollout، screenshots، testing evidence.",risk:"PR ضخمة من غير context تخلي reviewer يدور في 600 سطر بدون خريطة.",state:"review"},
+{time:"14:30",phase:"Review",title:"Review teammate code",cmd:"review: stream backpressure handling",out:"1 blocking comment • 3 suggestions",situation:"وأنت مستني review بتراجع PR لزميل.",change:"اكتشفت إن worker تكتب أسرع من storage stream.",simple:"Review مش تنسيق؛ بنحاول نمنع bug قبل Production.",deep:"ركز على correctness first، ثم design/maintainability. ما تستهلكش الوقت في preferences formatter يحلها.",risk:"Senior review قاسي على الكود، محترم مع الشخص.",state:"review"},
+{time:"15:00",phase:"CI",title:"CI pipeline",cmd:"lint → typecheck → unit → integration → e2e",out:"all required checks passed.",situation:"الPR اتراجعت والchecks شغالة.",change:"جودة قابلة للتكرار قبل merge.",simple:"روبوت جرب الكود بنفس الخطوات لكل حد.",deep:"CI gate لازم تكون signal مفيدة مش checklist بطيئة. Parallelize وراقب flaky tests.",risk:"Pipeline 45 دقيقة تدفع الناس تتجنب feedback loop.",state:"ci"},
+{time:"15:20",phase:"Merge",title:"Merge + feature flag",cmd:"merge PR #982 • export_jobs_enabled=false",out:"deployed dark.",situation:"الكود دخل Production لكن feature لسه مقفولة للمستخدمين.",change:"Deployment منفصلة عن release الفعلي.",simple:"الكود موجود لكن الزر لسه مش ظاهر.",deep:"Feature flags تقلل coupling بين deploy وrelease وتسمح rollout تدريجي.",risk:"Flags نفسها debt؛ لازم owner وcleanup plan.",state:"ci"},
+{time:"15:40",phase:"Release",title:"Enable 5% rollout",cmd:"feature flag → 5% enterprise tenants",out:"first real exports running.",situation:"بدل فتح feature للجميع مرة واحدة، بنبدأ بجزء صغير.",change:"Traffic حقيقية بدأت تمر في flow الجديد.",simple:"نجرب على نسبة صغيرة قبل الجميع.",deep:"Canary release تقلل blast radius وتدي evidence من Production.",risk:"لازم تعرف مين ضمن الـ5% عشان debugging يبقى قابل للتتبع.",state:"prod"},
+{time:"16:00",phase:"Observe",title:"Watch metrics",cmd:"dashboard: export duration / failures / worker memory",out:"p95 duration 8.1s • failures 0.6% • memory rising",situation:"Feature شغالة لكن memory trend مش مريح.",change:"مفيش تغيير؛ بنشوف behavior الحقيقي.",simple:"الأرقام قالت إن فيه حاجة تستحق المتابعة.",deep:"راقب trend مش snapshot. اربط memory بحجم job وconcurrency والإصدار.",risk:"Average ممكن يخبي tail problems؛ p95/p99 مهمين.",state:"prod"},
+{time:"16:25",phase:"Incident",title:"Worker OOM",cmd:"kubectl logs worker-7c9 --previous",out:"OOMKilled after export rows=47,800",situation:"أكبر job قتلت worker بسبب memory.",change:"أصبح عندنا failure حقيقية في Production.",simple:"Job كبيرة كشفت bug ما ظهرش في tests.",deep:"ابدأ mitigation ثم evidence. لا تحول incident إلى live refactor.",risk:"Restart وحده غالبًا يكرر المشكلة.",state:"incident"},
+{time:"16:35",phase:"Mitigation",title:"Disable feature flag",cmd:"export_jobs_enabled → false",out:"new exports blocked • running jobs draining.",situation:"الأولوية تقليل impact.",change:"وقفنا jobs الجديدة من الدخول للنظام.",simple:"قفلنا الباب مؤقتًا عشان المشكلة ما تكبرش.",deep:"Feature flag أعطت mitigation سريع بدون rollback كامل للتطبيق.",risk:"تأكد إن disable لا يترك users في UI dead-end.",state:"incident"},
+{time:"16:50",phase:"Debugging",title:"Find root cause",cmd:"heap profile + code inspection",out:"CSV rows retained in metrics debug array.",situation:"جمعنا evidence بدل التخمين.",change:"اكتشفنا reference تمنع garbage collection.",simple:"لقينا ليه memory كانت بتكبر.",deep:"Heap evidence أثبت leak مرتبط بعدد rows، مش مجرد high concurrency.",risk:"إصلاح symptom بدون root cause يرجع المشكلة.",state:"incident"},
+{time:"17:10",phase:"Fix",title:"Hotfix + regression test",cmd:"remove retained rows • add 50k-row memory test",out:"peak RSS stable at 210MB.",situation:"عملت fix صغيرة ومركزة.",change:"شيلنا retention وضفنا test يمنع رجوع نفس المشكلة.",simple:"صلحنا السبب وضفنا اختبار للحالة الكبيرة.",deep:"Regression test تحول incident knowledge إلى guardrail دائم.",risk:"ما تعملش refactor كبير أثناء hotfix لو مش ضروري.",state:"tests"},
+{time:"17:40",phase:"Release",title:"Re-enable gradually",cmd:"5% → 25% → 100%",out:"memory flat • failures 0.2% • p95 7.4s",situation:"بعد hotfix بنفتح feature تدريجيًا.",change:"الfeature بقت متاحة لكل العملاء بعد مراقبة.",simple:"فتحناها خطوة خطوة ومراقبين.",deep:"Progressive rollout + metrics = release based on evidence.",risk:"100% rollout مش نهاية ownership؛ راقب فترة كافية.",state:"prod"},
+{time:"18:10",phase:"Wrap-up",title:"Document + handoff",cmd:"ADR + incident note + dashboard link",out:"context captured for team.",situation:"قبل نهاية اليوم بتوثق القرار والincident والحاجات المتبقية.",change:"المعرفة خرجت من دماغك وبقت team asset.",simple:"اللي حصل متوثق عشان الفريق يقدر يكمل.",deep:"Senior closes the loop: architecture decision، metrics، follow-ups، cleanup tasks، flag removal date.",risk:"Unwritten context يتحول لنفس النقاش أو نفس bug بعد شهر.",state:"review"}
+];
+
+const stepNames=["Standup","Requirements","Design","API","Schema","Endpoint","Idempotency","Queue","Worker","DB","UI","Polling","Pairing","Integration","E2E","PR","Review","CI","Merge","Canary","Metrics","Incident","Mitigate","Root cause","Hotfix","Rollout","Docs"];
+let step=0,timer=null;
+
+function item(t,cls=""){return `<div class="item ${cls}">${t}</div>`}
+function chips(arr){return arr.map(x=>`<span class="chip ${x.c||""}">${x.t}</span>`).join("")}
+
+function view(state){
+ let ui=[],api=[],data=[],async=[],tests=[],review=[],ci=[],obs=[],active="layerUI",runtime="";
+ if(state==="plan"){ui=[item("Product requirements","front")];active="layerUI"}
+ if(state==="design"){api=[item("POST /exports","api")];data=[item("export_jobs","db")];async=[item("Queue → Worker","ops")];active="layerAPI"}
+ if(state==="api"){api=[item("Route + AuthZ","api"),item("ExportService","api")];active="layerAPI"}
+ if(state==="data"){data=[item("export_jobs","db"),item("indexes / states","db")];active="layerData"}
+ if(state==="async"){async=[item("Queue","ops"),item("Worker","ops"),item("Object Storage","ops")];active="layerAsync"}
+ if(state==="ui"){ui=[item("ExportPanel","front"),item("Status states","front")];active="layerUI"}
+ if(state==="tests"){tests=[{t:"unit ✓",c:"good"},{t:"integration ✓",c:"good"},{t:"e2e ✓",c:"good"}];runtime="runtimeTests"}
+ if(state==="review"){review=[{t:"PR #982",c:"good"},{t:"review",c:"warn"}];runtime="runtimeReview"}
+ if(state==="ci"){ci=[{t:"typecheck ✓",c:"good"},{t:"tests ✓",c:"good"},{t:"deploy",c:"warn"}];runtime="runtimeCI"}
+ if(state==="prod"){obs=[{t:"p95",c:"good"},{t:"failures",c:"good"},{t:"memory",c:"warn"}];runtime="runtimeObs"}
+ if(state==="incident"){obs=[{t:"OOM",c:"bad"},{t:"flag off",c:"warn"},{t:"heap",c:"warn"}];runtime="runtimeObs"}
+ return {ui,api,data,async,tests,review,ci,obs,active,runtime};
+}
+
+function renderStep(){
+ const d=steps[step],mode=body.dataset.mode||"simple",v=view(d.state);
+ $("#simClock").textContent=d.time;$("#simTitle").textContent=d.title;$("#simPhase").textContent=d.phase;
+ $("#stepBadge").textContent=`Step ${step+1} / ${steps.length}`;
+ $("#simCommand").textContent=d.cmd;$("#simOutput").textContent=d.out;
+ $("#companySituation").textContent=d.situation;$("#actualChange").textContent=d.change;
+ $("#thinkingTitle").textContent=mode==="simple"?"الشرح ببساطة":"Deep Dive — تفكير Senior";
+ $("#thinkingText").textContent=d[mode];
+ $("#riskText").textContent=d.risk;
+ $("#uiItems").innerHTML=v.ui.join("");$("#apiItems").innerHTML=v.api.join("");$("#dataItems").innerHTML=v.data.join("");$("#asyncItems").innerHTML=v.async.join("");
+ $("#testChips").innerHTML=chips(v.tests);$("#reviewChips").innerHTML=chips(v.review);$("#ciChips").innerHTML=chips(v.ci);$("#obsChips").innerHTML=chips(v.obs);
+ $$(".layer-card").forEach(x=>x.classList.remove("active"));$("#"+v.active).classList.add("active");
+ $$(".runtime-box").forEach(x=>x.classList.remove("active"));if(v.runtime)$("#"+v.runtime).classList.add("active");
+ $$(".time-step").forEach((x,i)=>{x.classList.toggle("done",i<step);x.classList.toggle("current",i===step)});
+}
+
+$$(".mode-btn").forEach(b=>b.addEventListener("click",()=>{
+ $$(".mode-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+ body.dataset.mode=b.dataset.mode;$("#modeDetail").textContent=modeCopy[b.dataset.mode];renderStep();
+}));
+
+$("#timeline").innerHTML=steps.map((d,i)=>`<div class="time-step ${i===0?"current":""}"><b>${d.time}</b>${stepNames[i]||d.title}</div>`).join("");
+renderStep();
+
+$("#nextStep").addEventListener("click",()=>{step=Math.min(steps.length-1,step+1);renderStep()});
+$("#prevStep").addEventListener("click",()=>{step=Math.max(0,step-1);renderStep()});
+function stopAuto(){if(timer){clearInterval(timer);timer=null;$("#autoPlay").textContent="▶ شغّل اليوم تلقائيًا"}}
+$("#autoPlay").addEventListener("click",()=>{if(timer){stopAuto();return}$("#autoPlay").textContent="⏸ إيقاف";timer=setInterval(()=>{if(step>=steps.length-1){stopAuto();return}step++;renderStep()},1800)});
+$("#restart").addEventListener("click",()=>{stopAuto();step=0;renderStep()});
+
+
+/* Interactive frontend export demo */
+let exportTimer=null;
+let exportProgress=0;
+let exportRows=50000;
+let exportJob="";
+
+
+const exportStateDocs={
+  idle:{
+    title:"Idle",caption:"المستخدم لسه ما بدأش أي Export.",badge:"UI only",
+    frontend:"الزر متاح، options قابلة للتعديل، ومفيش progress أو job ID.",
+    backend:"مفيش request اتبعتت للسيرفر حتى الآن.",
+    risk:"أبسط state. المهم إن الواجهة ما تعرضش loading أو success بالغلط.",
+    progress:0,status:"Idle",text:"0% — Nothing running",
+    log:["UI: waiting for user input"]
+  },
+  submitting:{
+    title:"Submitting",caption:"المستخدم ضغط Start والـFrontend بتبعت الطلب.",badge:"HTTP request",
+    frontend:"نعطّل Start مؤقتًا ونظهر feedback فوري عشان المستخدم ما يضغطش مرتين.",
+    backend:"POST /v1/invoice-exports وصلت، والـAPI بتعمل validation + authorization + create job.",
+    risk:"Network retry ممكن تكرر POST؛ هنا idempotency مهمة لمنع duplicate jobs.",
+    progress:3,status:"Submitting",text:"3% — Creating export job",
+    log:["browser: POST /v1/invoice-exports","api: validating request…","api: creating export job…"]
+  },
+  processing:{
+    title:"Processing",caption:"الـAPI ردت بسرعة والـWorker بيعمل الشغل في الخلفية.",badge:"Async job",
+    frontend:"نعرض progress ونسمح Cancel حسب الـproduct contract. الواجهة تعمل polling أو تستقبل updates.",
+    backend:"Queue تحمل job والWorker يقرأ البيانات تدريجيًا ويكتب الملف في storage.",
+    risk:"لا تربط progress بأرقام وهمية؛ لازم contract واضحة أو على الأقل status صادق.",
+    progress:54,status:"Processing",text:"54% — 27,000 / 50,000 processed",
+    log:["api: 202 Accepted  id=exp_demo","queue: job enqueued","worker: streaming invoices…","worker: 27,000 rows written"]
+  },
+  ready:{
+    title:"Ready",caption:"الـWorker خلص والملف جاهز للتحميل.",badge:"Terminal success",
+    frontend:"نوقف polling، نعرض Download، ونحافظ على job history لو المستخدم رجع بعدين.",
+    backend:"job.status=ready وتم تخزين file_key وإصدار signed URL مؤقت.",
+    risk:"Download URL لازم تكون scoped ومؤقتة؛ ما تعرضش storage path عام.",
+    progress:100,status:"Ready",text:"100% — File ready",
+    log:["worker: upload complete","api: status=ready","storage: signed URL issued"]
+  },
+  failed:{
+    title:"Failed",caption:"الـJob انتهت بفشل معروف بدل ما تفضل معلّقة للأبد.",badge:"Terminal error",
+    frontend:"نوقف loading، نعرض رسالة مفهومة وRetry action لو آمنة.",
+    backend:"job.status=failed مع error_code قابل للتتبع؛ logs تحتفظ بالتفاصيل التقنية.",
+    risk:"ما تعرضش stack trace للمستخدم. فرّق بين retryable وnon-retryable errors.",
+    progress:68,status:"Failed",text:"68% — Export failed",
+    log:["worker: storage timeout","worker: retry budget exhausted","api: status=failed  code=EXPORT_STORAGE_TIMEOUT"]
+  }
+};
+
+function renderStateInspector(state){
+  const d=exportStateDocs[state]||exportStateDocs.idle;
+  $("#stateInspectorTitle").textContent=d.title;
+  $("#stateInspectorCaption").textContent=d.caption;
+  $("#stateInspectorBadge").textContent=d.badge;
+  $("#stateFrontendExplain").textContent=d.frontend;
+  $("#stateBackendExplain").textContent=d.backend;
+  $("#stateRiskExplain").textContent=d.risk;
+}
+
+function previewExportState(state){
+  stopExportTimer();
+  const d=exportStateDocs[state]||exportStateDocs.idle;
+  exportRows=50000;
+  exportProgress=d.progress;
+  exportJob=state==="idle"?"":"exp_demo";
+  $("#exportProgressBar").style.width=d.progress+"%";
+  $("#exportProgressText").textContent=d.text;
+  $("#exportJobId").textContent=exportJob?"job: "+exportJob:"job: —";
+  $("#exportLog").textContent="";
+  d.log.forEach((line,i)=>appendExportLog(line, state==="failed"&&i===d.log.length-1?"warnline":(state==="ready"?"okline":"")));
+  $("#exportStart").disabled=state==="submitting"||state==="processing";
+  $("#exportCancel").disabled=!(state==="submitting"||state==="processing");
+  $("#exportDownload").disabled=state!=="ready";
+  setExportState(state,d.status);
+  renderStateInspector(state);
+}
+
+function setExportState(state,label){
+  $$("#exportStateFlow [data-export-state]").forEach(x=>x.classList.toggle("active",x.dataset.exportState===state));
+  renderStateInspector(state);
+  const pill=$("#exportStatusPill");
+  pill.classList.remove("processing","ready","failed");
+  if(state==="submitting"||state==="processing")pill.classList.add("processing");
+  if(state==="ready")pill.classList.add("ready");
+  if(state==="failed")pill.classList.add("failed");
+  $("#exportStatusLabel").textContent=label||state;
+}
+
+function appendExportLog(text,kind=""){
+  const log=$("#exportLog");
+  const line=document.createElement("div");
+  if(kind)line.className=kind;
+  line.textContent=text;
+  log.appendChild(line);
+  log.scrollTop=log.scrollHeight;
+}
+
+function stopExportTimer(){
+  if(exportTimer){clearInterval(exportTimer);exportTimer=null;}
+}
+
+function resetExportDemo(){
+  stopExportTimer();
+  exportProgress=0;
+  exportJob="";
+  $("#exportProgressBar").style.width="0%";
+  $("#exportProgressText").textContent="0% — Nothing running";
+  $("#exportJobId").textContent="job: —";
+  $("#exportLog").textContent="UI ready. Choose options and press Start export.";
+  $("#exportStart").disabled=false;
+  $("#exportCancel").disabled=true;
+  $("#exportDownload").disabled=true;
+  setExportState("idle","Idle");
+}
+
+function finishExport(){
+  stopExportTimer();
+  exportProgress=100;
+  $("#exportProgressBar").style.width="100%";
+  $("#exportProgressText").textContent=`100% — ${exportRows.toLocaleString()} / ${exportRows.toLocaleString()} processed`;
+  appendExportLog("worker: upload complete → object storage","okline");
+  appendExportLog("api: status=ready, signed download URL issued","okline");
+  $("#exportStart").disabled=false;
+  $("#exportCancel").disabled=true;
+  $("#exportDownload").disabled=false;
+  setExportState("ready","Ready");
+}
+
+$("#exportStart").addEventListener("click",()=>{
+  stopExportTimer();
+  exportRows=Number($("#exportSize").value)||50000;
+  exportProgress=0;
+  exportJob="exp_"+Date.now().toString(36).slice(-6);
+  $("#exportLog").textContent="";
+  $("#exportJobId").textContent="job: "+exportJob;
+  $("#exportProgressBar").style.width="2%";
+  $("#exportProgressText").textContent="2% — Submitting request";
+  $("#exportStart").disabled=true;
+  $("#exportCancel").disabled=false;
+  $("#exportDownload").disabled=true;
+  setExportState("submitting","Submitting");
+  appendExportLog(`POST /v1/invoice-exports  rows=${exportRows}`);
+  appendExportLog(`api: 202 Accepted  id=${exportJob}`,"okline");
+
+  setTimeout(()=>{
+    if(!$("#exportStart").disabled)return;
+    setExportState("processing","Processing");
+    appendExportLog("queue: invoice-export job enqueued");
+    appendExportLog("worker: started streaming rows");
+    exportTimer=setInterval(()=>{
+      exportProgress=Math.min(100,exportProgress+8);
+      const done=Math.min(exportRows,Math.round(exportRows*exportProgress/100));
+      $("#exportProgressBar").style.width=exportProgress+"%";
+      $("#exportProgressText").textContent=`${exportProgress}% — ${done.toLocaleString()} / ${exportRows.toLocaleString()} processed`;
+      if(exportProgress===48)appendExportLog("worker: backpressure handled; stream remains stable","warnline");
+      if(exportProgress>=100)finishExport();
+    },260);
+  },480);
+});
+
+$("#exportCancel").addEventListener("click",()=>{
+  if(!$("#exportStart").disabled)return;
+  stopExportTimer();
+  $("#exportStart").disabled=false;
+  $("#exportCancel").disabled=true;
+  $("#exportDownload").disabled=true;
+  $("#exportProgressText").textContent=`${exportProgress}% — Cancelled by user`;
+  appendExportLog("api: cancel requested");
+  appendExportLog("worker: cancellation acknowledged; partial file cleaned","warnline");
+  setExportState("ready","Cancelled");
+});
+
+$("#exportReset").addEventListener("click",resetExportDemo);
+
+$("#exportDownload").addEventListener("click",()=>{
+  if($("#exportDownload").disabled)return;
+  const format=$("#exportFormat").value;
+  let content,mime,ext;
+  if(format==="json"){
+    content=JSON.stringify([{invoice_id:"INV-1001",amount:1250,status:"paid"},{invoice_id:"INV-1002",amount:880,status:"open"}],null,2);
+    mime="application/json";ext="json";
+  }else{
+    content="invoice_id,amount,status\nINV-1001,1250,paid\nINV-1002,880,open\n";
+    mime="text/csv";ext="csv";
+  }
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=`invoice-export-${exportJob||"demo"}.${ext}`;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  appendExportLog(`browser: downloaded ${ext.toUpperCase()} file`,"okline");
+});
+
+$$("#exportStateFlow [data-export-state]").forEach(btn=>{
+  btn.addEventListener("click",()=>previewExportState(btn.dataset.exportState));
+});
+
+resetExportDemo();
+
+const incidentText={
+ logs:["✅ البداية الصحيحة","ابدأ بالـmetrics والlogs والheap/profile evidence. عايز تعرف هل memory مرتبطة بحجم job، concurrency، أو release محددة قبل ما تغيّر النظام."],
+ restart:["⚠️ Mitigation مؤقتة فقط","Restart قد يرجع worker دقائق لكنه غالبًا هيكرر OOM مع job الكبيرة. ممكن تستخدمه للحفاظ على الخدمة، لكن مش root-cause fix."],
+ disable:["✅ قوي جدًا هنا","Feature flag تقلل blast radius فورًا من غير rollback التطبيق كله. بعد كده عندك مساحة للتشخيص بهدوء."],
+ rollback:["✅ ممكن، حسب scope","لو المشكلة محصورة في feature الجديدة وrollback آمنة، ممكن ترجع release. لكن flag أسرع وأضيق تأثيرًا لو متاحة."],
+ patch:["✅ بعد evidence","اعمل hotfix صغيرة بعد ما تثبت السبب. أضف regression test للحجم اللي كشف المشكلة قبل إعادة rollout."]
+};
+$$("[data-incident]").forEach(b=>b.addEventListener("click",()=>{const [h,p]=incidentText[b.dataset.incident];$("#incidentResult").innerHTML=`<h3>${h}</h3><p>${p}</p>`}));
+
+$$(".quiz").forEach(q=>{
+ const correct=Number(q.dataset.answer),buttons=$$("button",q),r=$(".result",q);
+ buttons.forEach((b,i)=>b.addEventListener("click",()=>{
+   buttons.forEach(x=>x.classList.remove("active"));b.classList.add("active");
+   if(i+1===correct){r.className="result ok";r.textContent="صح ✅ — ده أقرب لتفكير Senior مبني على evidence وtradeoffs."}
+   else{r.className="result bad";r.textContent="مش الأفضل. اسأل نفسك: فين الـbottleneck؟ إيه الـblast radius؟ وإيه أبسط حل قابل للرجوع؟"}
+ }));
+});
+
+const prog=$("#progress");
+function updateProgress(){const h=document.documentElement,m=h.scrollHeight-innerHeight;prog.style.width=(m>0?scrollY/m*100:0)+"%"}
+addEventListener("scroll",updateProgress,{passive:true});updateProgress();
+})();
+</script>
+</body>
+</html>
