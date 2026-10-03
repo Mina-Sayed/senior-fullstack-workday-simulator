@@ -13,6 +13,29 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Senior Full-Stack Engineer — Interactive Workday Simulator">
 <meta name="twitter:description" content="A visual, interactive simulation of a real Senior Full-Stack Engineer workday.">
+<script>
+window.SFS_ANALYTICS_ID = "";
+window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function(){ dataLayer.push(arguments); };
+window.trackEvent = function(name, params){
+  try {
+    if (!window.SFS_ANALYTICS_ID) return;
+    window.gtag("event", name, params || {});
+  } catch (_) {}
+};
+(function(){
+  if (!window.SFS_ANALYTICS_ID) return;
+  var s=document.createElement("script");
+  s.async=true;
+  s.src="https://www.googletagmanager.com/gtag/js?id="+encodeURIComponent(window.SFS_ANALYTICS_ID);
+  document.head.appendChild(s);
+  window.gtag("js", new Date());
+  window.gtag("config", window.SFS_ANALYTICS_ID, {
+    anonymize_ip: true,
+    send_page_view: true
+  });
+})();
+</script>
 <style>
 :root{
   --bg:#0b0f14;
@@ -816,7 +839,7 @@ function renderStep(){
 
 $$(".mode-btn").forEach(b=>b.addEventListener("click",()=>{
  $$(".mode-btn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
- body.dataset.mode=b.dataset.mode;$("#modeDetail").textContent=modeCopy[b.dataset.mode];renderStep();
+ body.dataset.mode=b.dataset.mode;$("#modeDetail").textContent=modeCopy[b.dataset.mode];window.trackEvent("explanation_mode_change",{mode:b.dataset.mode});renderStep();
 }));
 
 $("#timeline").innerHTML=steps.map((d,i)=>`<div class="time-step ${i===0?"current":""}"><b>${d.time}</b>${stepNames[i]||d.title}</div>`).join("");
@@ -971,6 +994,7 @@ $("#exportStart").addEventListener("click",()=>{
   $("#exportCancel").disabled=false;
   $("#exportDownload").disabled=true;
   setExportState("submitting","Submitting");
+  window.trackEvent("export_started",{rows:exportRows,format:$("#exportFormat").value});
   appendExportLog(`POST /v1/invoice-exports  rows=${exportRows}`);
   appendExportLog(`api: 202 Accepted  id=${exportJob}`,"okline");
 
@@ -997,6 +1021,7 @@ $("#exportCancel").addEventListener("click",()=>{
   $("#exportCancel").disabled=true;
   $("#exportDownload").disabled=true;
   $("#exportProgressText").textContent=`${exportProgress}% — Cancelled by user`;
+  window.trackEvent("export_cancelled",{progress:exportProgress});
   appendExportLog("api: cancel requested");
   appendExportLog("worker: cancellation acknowledged; partial file cleaned","warnline");
   setExportState("ready","Cancelled");
@@ -1021,11 +1046,12 @@ $("#exportDownload").addEventListener("click",()=>{
   a.href=url;a.download=`invoice-export-${exportJob||"demo"}.${ext}`;
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
+  window.trackEvent("export_downloaded",{format:ext});
   appendExportLog(`browser: downloaded ${ext.toUpperCase()} file`,"okline");
 });
 
 $$("#exportStateFlow [data-export-state]").forEach(btn=>{
-  btn.addEventListener("click",()=>previewExportState(btn.dataset.exportState));
+  btn.addEventListener("click",()=>{window.trackEvent("export_state_preview",{state:btn.dataset.exportState});previewExportState(btn.dataset.exportState);});
 });
 
 resetExportDemo();
@@ -1037,7 +1063,7 @@ const incidentText={
  rollback:["✅ ممكن، حسب scope","لو المشكلة محصورة في feature الجديدة وrollback آمنة، ممكن ترجع release. لكن flag أسرع وأضيق تأثيرًا لو متاحة."],
  patch:["✅ بعد evidence","اعمل hotfix صغيرة بعد ما تثبت السبب. أضف regression test للحجم اللي كشف المشكلة قبل إعادة rollout."]
 };
-$$("[data-incident]").forEach(b=>b.addEventListener("click",()=>{const [h,p]=incidentText[b.dataset.incident];$("#incidentResult").innerHTML=`<h3>${h}</h3><p>${p}</p>`}));
+$("[data-incident]").forEach(b=>b.addEventListener("click",()=>{window.trackEvent("incident_choice",{choice:b.dataset.incident});const [h,p]=incidentText[b.dataset.incident];$("#incidentResult").innerHTML=`<h3>${h}</h3><p>${p}</p>`}));
 
 $$(".quiz").forEach(q=>{
  const correct=Number(q.dataset.answer),buttons=$$("button",q),r=$(".result",q);
